@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="de" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XRechnung-Generator · Storage24-Demo · Bode</title>
+    <meta
+      name="description"
+      content="Funktionsfähiger XRechnung-UBL-2.1-Generator für Self-Storage-Rechnungen. Demo-Prototyp, EN 16931-konform."
+    />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=general-sans@500,600,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2301696F'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='16' font-weight='700' fill='white' text-anchor='middle'%3EX%3C/text%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/" aria-label="XRechnung-Generator Startseite">
+          <svg
+            class="brand-logo"
+            width="36"
+            height="36"
+            viewBox="0 0 36 36"
+            fill="none"
+            aria-hidden="true"
+          >
+            <rect width="36" height="36" rx="8" fill="currentColor" />
+            <path
+              d="M11 12 L25 24 M25 12 L11 24"
+              stroke="white"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            />
+          </svg>
+          <div class="brand-text">
+            <span class="brand-name">XRechnung-Generator</span>
+            <span class="brand-sub">Self-Storage-Demo · EN 16931</span>
+          </div>
+        </a>
+        <nav class="nav">
+          <a href="#demo">Demo</a>
+          <a href="#wie-es-funktioniert">Wie es funktioniert</a>
+          <a
+            href="https://github.com/bode-freelance/xrechnung-prototype"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          >
+          <button
+            type="button"
+            class="theme-toggle"
+            data-theme-toggle
+            aria-label="Theme wechseln"
+          ></button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <span class="pill">Funktionsfähiger Prototyp · Storage24-Demo</span>
+          <h1 class="hero-title">
+            XRechnung in 30&nbsp;Sekunden —<br />
+            statt in 30&nbsp;Minuten.
+          </h1>
+          <p class="hero-sub">
+            Ab <strong>01.01.2027</strong> sind strukturierte E-Rechnungen für Unternehmen mit
+            &gt;&thinsp;800&thinsp;T&euro; Umsatz <strong>Pflicht</strong>
+            (<a
+              href="https://www.bundesfinanzministerium.de/Content/DE/Standardartikel/Themen/Steuern/2024-10-15-einfuehrung-e-rechnung.html"
+              target="_blank"
+              rel="noopener"
+              >Wachstumschancengesetz § 14 UStG</a
+            >). Dieser Prototyp erzeugt
+            <strong>EN 16931-konforme XRechnung-Dateien im UBL 2.1-Format</strong> direkt im
+            Browser — validierbar mit dem
+            <a
+              href="https://github.com/itplr-kosit/validator"
+              target="_blank"
+              rel="noopener"
+              >KoSIT-Validator</a
+            >.
+          </p>
+          <div class="hero-ctas">
+            <a class="btn-primary" href="#demo">Rechnung erzeugen</a>
+            <a
+              class="btn-ghost"
+              href="https://github.com/bode-freelance/xrechnung-prototype"
+              target="_blank"
+              rel="noopener"
+              >Source auf GitHub</a
+            >
+          </div>
+          <div class="hero-meta">
+            <div><strong>~480</strong> Zeilen Code</div>
+            <div><strong>0</strong> Abhängigkeiten (Vanilla JS)</div>
+            <div><strong>100%</strong> Client-seitig — keine Daten verlassen den Browser</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="demo" class="demo">
+        <div class="container">
+          <div class="demo-grid">
+            <!-- LEFT: FORM -->
+            <form class="card form" id="invoiceForm" autocomplete="off">
+              <div class="card-header">
+                <h2>Rechnungsdaten</h2>
+                <button
+                  type="button"
+                  class="btn-tiny"
+                  id="fillDemo"
+                  aria-label="Demo-Daten laden"
+                >
+                  Demo-Daten laden
+                </button>
+              </div>
+
+              <fieldset>
+                <legend>Rechnung</legend>
+                <div class="grid-2">
+                  <label
+                    >Rechnungsnummer (BT-1)
+                    <input type="text" name="invoiceNumber" value="RE-2026-00042" required
+                  /></label>
+                  <label
+                    >Rechnungsdatum (BT-2)
+                    <input type="date" name="issueDate" required
+                  /></label>
+                  <label
+                    >Leistungszeitraum Start (BT-73)
+                    <input type="date" name="periodStart" required
+                  /></label>
+                  <label
+                    >Leistungszeitraum Ende (BT-74)
+                    <input type="date" name="periodEnd" required
+                  /></label>
+                  <label
+                    >Leitweg-ID (BT-10) <span class="hint">Optional, B2G-Pflicht</span>
+                    <input
+                      type="text"
+                      name="buyerReference"
+                      value="04011000-12345-67"
+                      placeholder="z. B. 04011000-12345-67"
+                  /></label>
+                  <label
+                    >Währung (BT-5)
+                    <select name="currency">
+                      <option value="EUR" selected>EUR</option>
+                      <option value="CHF">CHF</option>
+                    </select></label
+                  >
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend>Verkäufer (Storage24 GmbH)</legend>
+                <div class="grid-2">
+                  <label
+                    >Firma
+                    <input type="text" name="sellerName" value="Storage24 GmbH" required
+                  /></label>
+                  <label
+                    >USt-ID (BT-31)
+                    <input type="text" name="sellerVatId" value="DE123456789" required
+                  /></label>
+                  <label
+                    >Straße
+                    <input type="text" name="sellerStreet" value="Hauptstraße 1" required
+                  /></label>
+                  <label
+                    >PLZ / Ort
+                    <input type="text" name="sellerCity" value="73547 Lorch" required
+                  /></label>
+                  <label
+                    >E-Mail (BT-43)
+                    <input
+                      type="email"
+                      name="sellerEmail"
+                      value="rechnungen@storage24.de"
+                      required
+                  /></label>
+                  <label
+                    >IBAN (BT-84)
+                    <input
+                      type="text"
+                      name="sellerIban"
+                      value="DE89 3704 0044 0532 0130 00"
+                      required
+                  /></label>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend>Kunde</legend>
+                <div class="grid-2">
+                  <label
+                    >Name / Firma
+                    <input
+                      type="text"
+                      name="buyerName"
+                      value="Mustermann Biedermeier-Handel"
+                      required
+                  /></label>
+                  <label
+                    >USt-ID (optional)
+                    <input type="text" name="buyerVatId" value="DE987654321"
+                  /></label>
+                  <label
+                    >Straße
+                    <input type="text" name="buyerStreet" value="Musterweg 42" required
+                  /></label>
+                  <label
+                    >PLZ / Ort
+                    <input type="text" name="buyerCity" value="10115 Berlin" required
+                  /></label>
+                  <label class="span-2"
+                    >E-Mail (BT-49)
+                    <input
+                      type="email"
+                      name="buyerEmail"
+                      value="kunde@biedermeier-handel.de"
+                      required
+                  /></label>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend>Lager-Positionen</legend>
+                <div id="lineItems" class="line-items"></div>
+                <button type="button" class="btn-tiny" id="addLine">+ Position hinzufügen</button>
+              </fieldset>
+
+              <div class="totals" id="totals"></div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary btn-block">
+                  XRechnung erzeugen
+                </button>
+              </div>
+            </form>
+
+            <!-- RIGHT: OUTPUT -->
+            <div class="output-col">
+              <div class="card output-card">
+                <div class="card-header tabbed">
+                  <h2>Ausgabe</h2>
+                  <div class="tabs" role="tablist">
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected="true"
+                      data-tab="preview"
+                      class="tab active"
+                    >
+                      Vorschau
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected="false"
+                      data-tab="xml"
+                      class="tab"
+                    >
+                      XML
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected="false"
+                      data-tab="validation"
+                      class="tab"
+                    >
+                      Validierung
+                    </button>
+                  </div>
+                </div>
+
+                <div class="tab-panel active" data-panel="preview">
+                  <div id="preview" class="preview">
+                    <p class="placeholder">
+                      Formular ausfüllen und „XRechnung erzeugen" klicken.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="tab-panel" data-panel="xml">
+                  <div class="xml-actions">
+                    <button type="button" class="btn-tiny" id="copyXml" disabled>
+                      Kopieren
+                    </button>
+                    <button type="button" class="btn-tiny" id="downloadXml" disabled>
+                      XML herunterladen
+                    </button>
+                  </div>
+                  <pre id="xmlOutput" class="xml-pre"><code>—</code></pre>
+                </div>
+
+                <div class="tab-panel" data-panel="validation">
+                  <div id="validation" class="validation">
+                    <p class="placeholder">Noch keine Rechnung erzeugt.</p>
+                  </div>
+                </div>
+              </div>
+
+              <aside class="note">
+                <strong>Hinweis:</strong> Der Prototyp validiert nach den EN 16931-Pflichtfeldern
+                (BT-Codes). Für die offizielle KoSIT-Prüfung wird die XML an den
+                <a
+                  href="https://github.com/itplr-kosit/validator"
+                  target="_blank"
+                  rel="noopener"
+                  >KoSIT-Java-Validator</a
+                >
+                übergeben. In der Produktionsversion läuft diese Prüfung automatisiert im
+                CI-Pipeline.
+              </aside>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="wie-es-funktioniert" class="how">
+        <div class="container">
+          <h2>Wie es funktioniert</h2>
+          <div class="how-grid">
+            <article class="how-card">
+              <span class="how-num">01</span>
+              <h3>Rechnungsdaten erfassen</h3>
+              <p>
+                Alle Pflichtfelder nach <strong>EN 16931</strong> / XRechnung 3.0 —
+                Rechnungsnummer (BT-1), Datum (BT-2), Leitweg-ID (BT-10), USt-ID (BT-31),
+                IBAN (BT-84), Positionen (BG-25).
+              </p>
+            </article>
+            <article class="how-card">
+              <span class="how-num">02</span>
+              <h3>UBL 2.1-XML erzeugen</h3>
+              <p>
+                Client-seitig im Browser. Keine Daten verlassen das Gerät. Der Generator
+                erzeugt valide UBL-2.1-Syntax mit korrektem CustomizationID
+                (<code>urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_3.0</code>).
+              </p>
+            </article>
+            <article class="how-card">
+              <span class="how-num">03</span>
+              <h3>Validieren &amp; versenden</h3>
+              <p>
+                XML-Download oder direkt an den <strong>KoSIT-Validator</strong> übergeben.
+                In der Vollversion: automatischer Versand über Peppol-Netzwerk oder E-Mail
+                mit XML-Anhang (ZUGFeRD-Hybrid optional).
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta-band">
+        <div class="container cta-inner">
+          <div>
+            <h2>Das ist die Demo. Die Produktionsversion kann mehr.</h2>
+            <p>
+              Massenrechnung für 140 Standorte · SEPA-Lastschrift-Einzug · GoBD-konforme
+              Archivierung · Mahnwesen-Automatisierung · Peppol-Anbindung · HubSpot-Sync.
+            </p>
+          </div>
+          <a class="btn-primary" href="mailto:boderaffa1@gmail.com?subject=XRechnung-Projekt Storage24"
+            >Gespräch vereinbaren</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div>
+          <strong>XRechnung-Generator</strong> · Prototyp für Storage24 ·
+          <a href="mailto:boderaffa1@gmail.com">Raffael Bode</a>
+        </div>
+        <div class="footer-links">
+          <a
+            href="https://github.com/bode-freelance/xrechnung-prototype"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          >
+          <a
+            href="https://xeinkauf.de/xrechnung/"
+            target="_blank"
+            rel="noopener"
+            >XRechnung-Spec</a
+          >
+          <a
+            href="https://github.com/itplr-kosit/validator"
+            target="_blank"
+            rel="noopener"
+            >KoSIT-Validator</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script src="xrechnung.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
