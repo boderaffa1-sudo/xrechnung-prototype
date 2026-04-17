@@ -2,7 +2,9 @@
 
 Ein funktionsfähiger Prototyp zur Erzeugung von **XRechnung-3.0**-konformen E-Rechnungen im **UBL-2.1**-Format — als Demo für einen Pitch gegenüber Storage24 GmbH.
 
-**Live-Demo:** _(URL wird nach Deployment hier eingetragen)_
+**Live-Demo:** Siehe [Deployments](https://github.com/boderaffa1-sudo/xrechnung-prototype/deployments)
+
+**Repo:** https://github.com/boderaffa1-sudo/xrechnung-prototype
 
 ---
 

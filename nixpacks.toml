@@ -1,0 +1,11 @@
+# Railway / Nixpacks configuration for static site hosting
+# Serves the static HTML/CSS/JS via a lightweight HTTP server.
+
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["npm install -g serve"]
+
+[start]
+cmd = "serve -s . -l $PORT --no-clipboard"
